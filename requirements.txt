@@ -1,0 +1,17 @@
+# Core RAG
+langchain
+langchain-community
+chromadb>=0.4.22,<0.5.0
+sentence-transformers
+pypdf
+# LLM (Google Gemini)
+langchain-google-genai
+google-generativeai
+# Text-to-Speech
+pyttsx3
+gTTS
+# ML backend
+torch
+# Utilities
+pandas
+numpy

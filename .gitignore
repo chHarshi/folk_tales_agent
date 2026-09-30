@@ -1,4 +1,27 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+.Python
+
+# Environment
 .env
+
+# Generated data
+embeddings/
+outputs/
+data/eval/gold.jsonl
+installed.txt
+
+# Raw source books (large, re-downloadable from Gutenberg)
+data/raw/
+
+# Audio/image artifacts anywhere
+*.mp3
+*.wav
+story_image.txt
+
+# OS/editor
+.vscode/
+.DS_Store
+Thumbs.db

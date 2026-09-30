@@ -1,17 +1,15 @@
-# Core RAG
+streamlit
+python-dotenv
 langchain
-langchain-community
-chromadb>=0.4.22,<0.5.0
-sentence-transformers
-pypdf
-# LLM (Google Gemini)
+langchain-core
+langchain-text-splitters
 langchain-google-genai
-google-generativeai
-# Text-to-Speech
-pyttsx3
+langchain-huggingface
+langchain-chroma
+langchain-ollama
+chromadb
+sentence-transformers
+huggingface_hub
+pillow
 gTTS
-# ML backend
-torch
-# Utilities
-pandas
-numpy
+pydantic

@@ -95,6 +95,8 @@ python ingest.py --reset
 
 ## Running the app
 
+**Option A — directly:**
+
 ```bash
 streamlit run app.py
 ```
@@ -104,6 +106,21 @@ or from the command line:
 ```bash
 python main.py
 ```
+
+**Option B — via Docker (recommended, fully reproducible):**
+
+```bash
+docker compose up -d ollama
+docker compose up ollama-pull
+docker compose --profile ingest run --rm ingest
+docker compose up --build app
+```
+
+Visit `http://localhost:8501`. The full pipeline — retrieval, Gemini narration, Ollama translation, gTTS audio, and Hugging Face image generation — has been tested end-to-end inside this container setup.
+
+## Deployment
+
+This app is designed to run locally or via Docker. It is **not deployed to a public URL**, by design: the translation and image-prompt steps depend on Ollama running a local 4.9GB LLM, which needs more RAM, disk, and CPU than free hosting tiers (Streamlit Community Cloud, Render, Railway, etc.) provide. Running it there would require either a paid cloud VM or rewriting those steps to rely entirely on hosted APIs instead of Ollama — a reasonable future extension, but out of scope here in favor of keeping local inference free and unlimited during development.
 
 ## Project structure
 

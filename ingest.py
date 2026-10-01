@@ -8,7 +8,12 @@ import config
 
 def main(path, reset):
     if reset and os.path.exists(config.PERSIST_DIR):
-        shutil.rmtree(config.PERSIST_DIR)   # prevents duplicate chunks on re-runs
+        for entry in os.listdir(config.PERSIST_DIR):
+            path = os.path.join(config.PERSIST_DIR, entry)
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            else:
+                os.remove(path)
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=config.CHUNK_SIZE, chunk_overlap=config.CHUNK_OVERLAP

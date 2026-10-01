@@ -1,0 +1,10 @@
+venv/
+.git/
+__pycache__/
+embeddings/
+outputs/
+.env
+*.mp3
+*.png
+data/raw/
+installed.txt

@@ -1,0 +1,41 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    entrypoint: ["sh", "-c", "sleep 3 && ollama pull llama3.1:8b --insecure || true"]
+    environment:
+      - OLLAMA_HOST=ollama:11434
+
+  ingest:
+    build: .
+    profiles: ["ingest"]
+    env_file: .env
+    command: python ingest.py --reset
+    volumes:
+      - ./data:/app/data
+      - embeddings:/app/embeddings
+
+  app:
+    build: .
+    depends_on:
+      - ollama
+    ports:
+      - "8501:8501"
+    env_file: .env
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - embeddings:/app/embeddings
+      - ./outputs:/app/outputs
+
+volumes:
+  ollama_data:
+  embeddings:

@@ -51,6 +51,33 @@ ValidationAgent ── (optional) judges faithfulness against the source
 - **Ollama (Llama 3.1 8B, local)** — query translation and image-scene prompts (short, high-volume tasks that don't need Gemini's quota).
 - **Hugging Face Inference API (FLUX.1-schnell)** — image generation (Gemini's free tier has no image quota).
 
+## Models and components
+
+| Role | Model / tool | Runs where | Used for |
+|---|---|---|---|
+| Vector database | ChromaDB (cosine similarity) | Local (`embeddings/`) | Stores story chunks and finds the closest matches to a query |
+| Embedding model | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Local | Converts chunks and queries into 384-dimensional vectors |
+| Story LLM | Gemini 2.5 Flash | Google API | Retells the retrieved story in English, Hindi, or Telugu |
+| Validation judge | Gemini 2.5 Flash | Google API | Scores faithfulness, completeness, and moral using structured output |
+| Local LLM | Llama 3.1 8B via Ollama | Local (own Docker container) | Translates non-English queries to English; writes scene prompts for the image model |
+| Image model | FLUX.1-schnell (`black-forest-labs/FLUX.1-schnell`) | Hugging Face Inference API | Generates the story illustration |
+| Text-to-speech | gTTS | Google service | Audio narration in English, Hindi, and Telugu |
+
+**Supporting pieces**
+- **Orchestration:** LangChain (prompt templates, chains, structured output)
+- **Chunking:** `RecursiveCharacterTextSplitter`, 450 characters with 50 overlap (7,226 chunks from 213 stories)
+- **Retrieval:** top 10 chunks, aggregated per story with the best-two-chunks ("top2") score, with a minimum relevance threshold of 0.40
+- **UI and packaging:** Streamlit; Docker Compose with three services (`ollama`, `ingest`, `app`)
+
+**How a query flows**
+1. If the query is not in Latin script (Hindi or Telugu), Llama 3.1 translates it to English.
+2. The query is embedded and matched against the Chroma index of English stories.
+3. The best-scoring story is selected (or the app declines if no story clears the threshold).
+4. Gemini retells that story in the language chosen in the UI.
+5. gTTS reads it aloud, and FLUX.1-schnell optionally generates an illustration.
+
+The query language and the output language are independent: the search-box language only affects how the story is found, while the dropdown controls the language of the narration and audio.
+
 ## Retrieval evaluation
 
 Retrieval was evaluated on gold-set queries covering all 213 stories (559 English, 213 Hindi, 213 Telugu — 985 total) comparing chunk-scoring strategies:
